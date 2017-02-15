@@ -1,0 +1,13 @@
+{
+    "dependencies": {
+        "github.com/Sirupsen/logrus": {
+            "branch": "master"
+        },
+        "github.com/rai-project/config": {
+            "branch": "master"
+        },
+        "github.com/rai-project/logger": {
+            "branch": "master"
+        }
+    }
+}
