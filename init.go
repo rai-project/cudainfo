@@ -14,7 +14,7 @@ var (
 )
 
 func init() {
-	config.OnInit(func() {
+	config.AfterInit(func() {
 		log = logger.WithField("pkg", "cudainfo")
 		err := LoadUVM()
 		if err != nil {
