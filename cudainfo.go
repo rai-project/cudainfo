@@ -38,46 +38,55 @@ type nvmlDevice struct {
 	Topology    []P2PLink
 }
 
+// Device ...
 type Device struct {
 	Idx int
 	*cuDevice
 	*nvmlDevice
 }
 
+// P2PLinkType ...
 type P2PLinkType uint
 
+// P2PLink ...
 type P2PLink struct {
 	BusID string
 	Link  P2PLinkType
 }
 
+// ClockInfo ...
 type ClockInfo struct {
 	Core   uint
 	Memory uint
 }
 
+// PCIInfo ...
 type PCIInfo struct {
 	BusID     string
 	BAR1      uint64
 	Bandwidth uint
 }
 
+// UtilizationInfo ...
 type UtilizationInfo struct {
 	GPU     uint
 	Encoder uint
 	Decoder uint
 }
 
+// PCIThroughputInfo ...
 type PCIThroughputInfo struct {
 	RX uint
 	TX uint
 }
 
+// PCIStatusInfo ...
 type PCIStatusInfo struct {
 	BAR1Used   uint64
 	Throughput PCIThroughputInfo
 }
 
+// ECCErrorsInfo ...
 type ECCErrorsInfo struct {
 	L1Cache uint64
 	L2Cache uint64
@@ -89,11 +98,13 @@ type nvmlMemoryInfo struct {
 	ECCErrors  ECCErrorsInfo
 }
 
+// ProcessInfo ...
 type ProcessInfo struct {
 	PID  uint
 	Name string
 }
 
+// DeviceStatus ...
 type DeviceStatus struct {
 	Power       uint
 	Temperature uint
@@ -104,6 +115,7 @@ type DeviceStatus struct {
 	Processes   []ProcessInfo
 }
 
+// P2PLinkUnknown ...
 const (
 	P2PLinkUnknown P2PLinkType = iota
 	P2PLinkCrossCPU
@@ -114,6 +126,7 @@ const (
 	P2PLinkSameBoard
 )
 
+// ErrCGODisabled ...
 var (
 	ErrCGODisabled        = errors.New("Cannot get device information since CGO is disabled.")
 	ErrCPUAffinity        = errors.New("failed to retrieve CPU affinity")
@@ -165,6 +178,7 @@ var (
 	}
 )
 
+// String ...
 func (t P2PLinkType) String() string {
 	switch t {
 	case P2PLinkCrossCPU:
@@ -184,6 +198,7 @@ func (t P2PLinkType) String() string {
 	return "???"
 }
 
+// GetCUDADevice ...
 func GetCUDADevice(id int) (*Device, error) {
 	if runtime.GOOS != "linux" {
 		return nil, errors.New("Unsupported OS")
@@ -203,6 +218,7 @@ func GetCUDADevice(id int) (*Device, error) {
 	}, nil
 }
 
+// LoadUVM ...
 func LoadUVM() error {
 	if runtime.GOOS != "linux" {
 		return nil

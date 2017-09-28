@@ -21,6 +21,7 @@ func cudaErr(ret C.cudaError_t) error {
 	return errors.New(err)
 }
 
+// GetCUDAVersion ...
 func GetCUDAVersion() (string, error) {
 	var driver C.int
 	err := cudaErr(C.cudaDriverGetVersion(&driver))
@@ -28,6 +29,7 @@ func GetCUDAVersion() (string, error) {
 	return d, err
 }
 
+// NewCUDADeviceByIdx ...
 func NewCUDADeviceByIdx(id int) (*cuDevice, error) {
 	var prop C.struct_cudaDeviceProp
 
@@ -63,6 +65,8 @@ func NewCUDADeviceByIdx(id int) (*cuDevice, error) {
 		},
 	}, nil
 }
+
+// NewCUDADevice ...
 func NewCUDADevice(busID string) (*cuDevice, error) {
 	var dev C.int
 	id := C.CString(busID)
@@ -72,6 +76,8 @@ func NewCUDADevice(busID string) (*cuDevice, error) {
 	C.free(unsafe.Pointer(id))
 	return NewCUDADeviceByIdx(int(dev))
 }
+
+// CanAccessPeer ...
 func CanAccessPeer(dev1, dev2 *cuDevice) (bool, error) {
 	var ok C.int
 	err := cudaErr(C.cudaDeviceCanAccessPeer(&ok, C.int(dev1.handle), C.int(dev2.handle)))

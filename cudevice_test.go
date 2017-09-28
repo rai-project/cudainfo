@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestDevice ...
 func TestDevice(t *testing.T) {
 	v, err := GetCUDAVersion()
 	assert.NoError(t, err)

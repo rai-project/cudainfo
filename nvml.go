@@ -36,6 +36,7 @@ func check(ret C.nvmlReturn_t) {
 	}
 }
 
+// GetDeviceCount ...
 func GetDeviceCount() (uint, error) {
 	var n C.uint
 
@@ -43,6 +44,7 @@ func GetDeviceCount() (uint, error) {
 	return uint(n), err
 }
 
+// GetDriverVersion ...
 func GetDriverVersion() (string, error) {
 	var driver [szDriver]C.char
 
@@ -57,6 +59,7 @@ var pcieGenToBandwidth = map[int]uint{
 	4: 1969,
 }
 
+// NewNvmlDevice ...
 func NewNvmlDevice(idx uint) (device *nvmlDevice, err error) {
 	var (
 		dev   C.nvmlDevice_t
@@ -114,6 +117,7 @@ func NewNvmlDevice(idx uint) (device *nvmlDevice, err error) {
 	return
 }
 
+// Status ...
 func (d *nvmlDevice) Status() (status *DeviceStatus, err error) {
 	var (
 		power      C.uint
@@ -195,6 +199,7 @@ func (d *nvmlDevice) Status() (status *DeviceStatus, err error) {
 	return
 }
 
+// GetP2PLink ...
 func GetP2PLink(dev1, dev2 *nvmlDevice) (link P2PLinkType, err error) {
 	var level C.nvmlGpuTopologyLevel_t
 
@@ -224,6 +229,7 @@ func GetP2PLink(dev1, dev2 *nvmlDevice) (link P2PLinkType, err error) {
 	return
 }
 
+// GetDevicePath ...
 func GetDevicePath(idx uint) (path string, err error) {
 	var dev C.nvmlDevice_t
 	var minor C.uint
