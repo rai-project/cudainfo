@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 )
 
 type cuMemoryInfo struct {
@@ -17,7 +18,7 @@ type cuMemoryInfo struct {
 }
 
 type cuDevice struct {
-	handle cuDeviceHandle
+	Handle cuDeviceHandle
 	Family string
 	Arch   string
 	Cores  uint
@@ -26,7 +27,7 @@ type cuDevice struct {
 }
 
 type NVMLDevice struct {
-	handle nvmlDeviceHandle
+	Handle nvmlDeviceHandle
 
 	Model       string
 	UUID        string
@@ -98,6 +99,11 @@ type nvmlMemoryInfo struct {
 	ECCErrors  ECCErrorsInfo
 }
 
+type nvmlMemoryStatus struct {
+	Used uint64
+	Free uint64
+}
+
 // ProcessInfo ...
 type ProcessInfo struct {
 	PID  uint
@@ -106,10 +112,11 @@ type ProcessInfo struct {
 
 // DeviceStatus ...
 type DeviceStatus struct {
+	TimeStamp   time.Time
 	Power       uint
 	Temperature uint
 	Utilization UtilizationInfo
-	Memory      nvmlMemoryInfo
+	Memory      nvmlMemoryStatus
 	Clocks      ClockInfo
 	PCI         PCIStatusInfo
 	Processes   []ProcessInfo
@@ -138,6 +145,7 @@ var (
 		"3": "Kepler",
 		"5": "Maxwell",
 		"6": "Pascal",
+		"7": "Volta",
 	}
 	archToCoresPerSM = map[string]uint{
 		"1.0": 8,   // Tesla Generation (SM 1.0) G80 class

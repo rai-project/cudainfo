@@ -50,7 +50,7 @@ func NewCUDADeviceByIdx(id int) (*cuDevice, error) {
 	// Destroy the active CUDA context
 	cudaErr(C.cudaDeviceReset())
 	return &cuDevice{
-		handle: cuDeviceHandle(dev),
+		Handle: cuDeviceHandle(dev),
 		Family: archToFamily[arch[:1]],
 		Arch:   arch,
 		Cores:  cores * uint(prop.multiProcessorCount),
@@ -80,7 +80,7 @@ func NewCUDADevice(busID string) (*cuDevice, error) {
 // CanAccessPeer ...
 func CanAccessPeer(dev1, dev2 *cuDevice) (bool, error) {
 	var ok C.int
-	err := cudaErr(C.cudaDeviceCanAccessPeer(&ok, C.int(dev1.handle), C.int(dev2.handle)))
+	err := cudaErr(C.cudaDeviceCanAccessPeer(&ok, C.int(dev1.Handle), C.int(dev2.Handle)))
 	return (ok != 0), err
 }
 

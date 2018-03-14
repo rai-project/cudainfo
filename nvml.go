@@ -10,6 +10,7 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 type nvmlDeviceHandle C.nvmlDevice_t
@@ -133,6 +134,7 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 		procname   [szProcName]C.char
 		procs      [szProcs]C.nvmlProcessInfo_t
 		nprocs     = C.uint(szProcs)
+		timestamp  = time.Now()
 	)
 
 	defer func() {
@@ -141,18 +143,19 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 		}
 	}()
 
-	check(C.nvmlDeviceGetPowerUsage(d.handle, &power))
-	check(C.nvmlDeviceGetTemperature(d.handle, C.NVML_TEMPERATURE_GPU, &temp))
-	check(C.nvmlDeviceGetUtilizationRates(d.handle, &usage))
-	check(C.nvmlDeviceGetEncoderUtilization(d.handle, &encoder[0], &encoder[1]))
-	check(C.nvmlDeviceGetDecoderUtilization(d.handle, &decoder[0], &decoder[1]))
-	check(C.nvmlDeviceGetMemoryInfo(d.handle, &mem))
-	check(C.nvmlDeviceGetClockInfo(d.handle, C.NVML_CLOCK_SM, &clock[0]))
-	check(C.nvmlDeviceGetClockInfo(d.handle, C.NVML_CLOCK_MEM, &clock[1]))
-	check(C.nvmlDeviceGetBAR1MemoryInfo(d.handle, &bar1))
-	check(C.nvmlDeviceGetComputeRunningProcesses(d.handle, &nprocs, &procs[0]))
+	check(C.nvmlDeviceGetPowerUsage(d.Handle, &power))
+	check(C.nvmlDeviceGetTemperature(d.Handle, C.NVML_TEMPERATURE_GPU, &temp))
+	check(C.nvmlDeviceGetUtilizationRates(d.Handle, &usage))
+	check(C.nvmlDeviceGetEncoderUtilization(d.Handle, &encoder[0], &encoder[1]))
+	check(C.nvmlDeviceGetDecoderUtilization(d.Handle, &decoder[0], &decoder[1]))
+	check(C.nvmlDeviceGetMemoryInfo(d.Handle, &mem))
+	check(C.nvmlDeviceGetClockInfo(d.Handle, C.NVML_CLOCK_SM, &clock[0]))
+	check(C.nvmlDeviceGetClockInfo(d.Handle, C.NVML_CLOCK_MEM, &clock[1]))
+	check(C.nvmlDeviceGetBAR1MemoryInfo(d.Handle, &bar1))
+	check(C.nvmlDeviceGetComputeRunningProcesses(d.Handle, &nprocs, &procs[0]))
 
 	status = &DeviceStatus{
+		TimeStamp:   timestamp,
 		Power:       uint(power / 1000),
 		Temperature: uint(temp),
 		Utilization: UtilizationInfo{
@@ -160,8 +163,9 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 			Encoder: uint(encoder[0]),
 			Decoder: uint(decoder[0]),
 		},
-		Memory: nvmlMemoryInfo{
-			GlobalUsed: uint64(mem.used / (1024 * 1024)),
+		Memory: nvmlMemoryStatus{
+			Used: uint64(mem.Used),
+			Free: uint64(mem.Free),
 		},
 		Clocks: ClockInfo{
 			Core:   uint(clock[0]),
@@ -172,21 +176,21 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 		},
 	}
 
-	r := C.nvmlDeviceGetMemoryErrorCounter(d.handle, C.NVML_MEMORY_ERROR_TYPE_UNCORRECTED, C.NVML_VOLATILE_ECC,
+	r := C.nvmlDeviceGetMemoryErrorCounter(d.Handle, C.NVML_MEMORY_ERROR_TYPE_UNCORRECTED, C.NVML_VOLATILE_ECC,
 		C.NVML_MEMORY_LOCATION_L1_CACHE, &ecc[0])
 	if r != C.NVML_ERROR_NOT_SUPPORTED { // only supported on Tesla cards
 		check(r)
-		check(C.nvmlDeviceGetMemoryErrorCounter(d.handle, C.NVML_MEMORY_ERROR_TYPE_UNCORRECTED, C.NVML_VOLATILE_ECC,
+		check(C.nvmlDeviceGetMemoryErrorCounter(d.Handle, C.NVML_MEMORY_ERROR_TYPE_UNCORRECTED, C.NVML_VOLATILE_ECC,
 			C.NVML_MEMORY_LOCATION_L2_CACHE, &ecc[1]))
-		check(C.nvmlDeviceGetMemoryErrorCounter(d.handle, C.NVML_MEMORY_ERROR_TYPE_UNCORRECTED, C.NVML_VOLATILE_ECC,
+		check(C.nvmlDeviceGetMemoryErrorCounter(d.Handle, C.NVML_MEMORY_ERROR_TYPE_UNCORRECTED, C.NVML_VOLATILE_ECC,
 			C.NVML_MEMORY_LOCATION_DEVICE_MEMORY, &ecc[2]))
 		status.Memory.ECCErrors = ECCErrorsInfo{uint64(ecc[0]), uint64(ecc[1]), uint64(ecc[2])}
 	}
 
-	r = C.nvmlDeviceGetPcieThroughput(d.handle, C.NVML_PCIE_UTIL_RX_BYTES, &throughput[0])
+	r = C.nvmlDeviceGetPcieThroughput(d.Handle, C.NVML_PCIE_UTIL_RX_BYTES, &throughput[0])
 	if r != C.NVML_ERROR_NOT_SUPPORTED { // only supported on Maxwell or newer
 		check(r)
-		check(C.nvmlDeviceGetPcieThroughput(d.handle, C.NVML_PCIE_UTIL_TX_BYTES, &throughput[1]))
+		check(C.nvmlDeviceGetPcieThroughput(d.Handle, C.NVML_PCIE_UTIL_TX_BYTES, &throughput[1]))
 		status.PCI.Throughput = PCIThroughputInfo{uint(throughput[0]), uint(throughput[1])}
 	}
 
