@@ -7,8 +7,9 @@ package cudainfo
 //#cgo LDFLAGS: -lcudart_static -lnvidia-ml -ldl -Wl,--unresolved-symbols=ignore-in-object-files
 //#cgo CFLAGS: -I/usr/local/cuda/include -I /usr/include/nvidia/gdk
 //#cgo LDFLAGS: -L/usr/local/cuda/lib64 -L /usr/src/gdk/nvml/lib/
-//#cgo LDFLAGS: -L /usr/lib/nvidia-367
-//#cgo LDFLAGS: -L /usr/lib/nvidia-377
-//#cgo LDFLAGS: -L /usr/lib/nvidia-378
-//#cgo LDFLAGS: -L /usr/lib/nvidia-390
+//#cgo LDFLAGS: -L /usr/lib/nvidia     -L /usr/lib64/nvidia
+//#cgo LDFLAGS: -L /usr/lib/nvidia-367 -L /usr/lib64/nvidia-367
+//#cgo LDFLAGS: -L /usr/lib/nvidia-377 -L /usr/lib64/nvidia-377
+//#cgo LDFLAGS: -L /usr/lib/nvidia-378 -L /usr/lib64/nvidia-378
+//#cgo LDFLAGS: -L /usr/lib/nvidia-390 -L /usr/lib64/nvidia-390
 import "C"
