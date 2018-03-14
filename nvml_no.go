@@ -1,4 +1,4 @@
-// +build !cgo !linux !amd64
+// +build !cgo !linux !amd64,!ppc64le
 
 package cudainfo
 

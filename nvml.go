@@ -1,4 +1,4 @@
-// +build cgo,linux,amd64
+// +build cgo,linux,amd64 cgo,linux,ppc64le
 
 // Copyright (c) 2015-2016, NVIDIA CORPORATION. All rights reserved.
 
