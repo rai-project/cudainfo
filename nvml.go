@@ -8,9 +8,10 @@ package cudainfo
 import "C"
 
 import (
-	"errors"
 	"fmt"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type nvmlDeviceHandle C.nvmlDevice_t
@@ -77,7 +78,7 @@ func NewNvmlDevice(idx uint) (device *NVMLDevice, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.Wrapf(r.(error), r)
+			err = r.(error)
 		}
 	}()
 
@@ -131,7 +132,6 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 		clock      [2]C.uint
 		bar1       C.nvmlBAR1Memory_t
 		throughput [2]C.uint
-		procname   [szProcName]C.char
 		procs      [szProcs]C.nvmlProcessInfo_t
 		nprocs     = C.uint(szProcs)
 		timestamp  = time.Now()
@@ -139,6 +139,7 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
+			//debug.PrintStack()
 			err = r.(error)
 		}
 	}()
@@ -197,10 +198,17 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 
 	status.Processes = make([]ProcessInfo, nprocs)
 	for i := range status.Processes {
+		const maxLength = 256
 		status.Processes[i].PID = uint(procs[i].pid)
-		check(C.nvmlSystemGetProcessName(procs[i].pid, &procname[0], szProcName))
-		status.Processes[i].Name = C.GoString(&procname[0])
+		buffer := [maxLength]C.char{}
+		err := nvmlErr(C.nvmlSystemGetProcessName(procs[i].pid, &buffer[0], maxLength))
+		if err != nil {
+			status.Processes[i].Name = "[unknown]"
+		} else {
+			status.Processes[i].Name = C.GoString(&buffer[0])
+		}
 	}
+	err = nil
 	return
 }
 
