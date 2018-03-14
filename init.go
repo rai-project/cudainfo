@@ -21,12 +21,12 @@ func init() {
 			log.WithError(err).Error("Failed to load uvm")
 		}
 		initNVMLLibrary()
-		cnt, err := GetDeviceCount()
-		if err != nil {
-			log.WithError(err).Error("Was not able to query devices")
-		}
-		log.WithField("device_count", cnt).
-			Infof("%d devices where found on the system", cnt)
+		//	cnt, err := GetDeviceCount()
+		//	if err != nil {
+		//		log.WithError(err).Error("Was not able to query devices")
+		//	}
+		//	log.WithField("device_count", cnt).
+		//			Infof("%d devices where found on the system", cnt)
 	})
 }
 
