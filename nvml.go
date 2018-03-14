@@ -77,7 +77,7 @@ func NewNvmlDevice(idx uint) (device *NVMLDevice, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			err = r.(error)
+			err = errors.Wrapf(r.(error), r)
 		}
 	}()
 

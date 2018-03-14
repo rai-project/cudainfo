@@ -1,8 +1,6 @@
 package cudainfo
 
 import (
-	"os"
-
 	"github.com/sirupsen/logrus"
 
 	"github.com/rai-project/config"
@@ -28,18 +26,4 @@ func init() {
 		log.WithField("device_count", cnt).
 			Infof("%d devices where found on the system", cnt)
 	})
-}
-
-func initNVML() error {
-	if err := os.Setenv("CUDA_DISABLE_UNIFIED_MEMORY", "1"); err != nil {
-		return err
-	}
-	if err := os.Setenv("CUDA_CACHE_DISABLE", "1"); err != nil {
-		return err
-	}
-	if err := os.Unsetenv("CUDA_VISIBLE_DEVICES"); err != nil {
-		return err
-	}
-	initNVMLLibrary()
-	return nil
 }
