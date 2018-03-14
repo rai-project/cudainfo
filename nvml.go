@@ -98,8 +98,8 @@ func NewNvmlDevice(idx uint) (device *NVMLDevice, err error) {
 	//	return nil, err
 	//}
 
-	device = &nvmlDevice{
-		handle: nvmlDeviceHandle(dev),
+	device = &NVMLDevice{
+		Handle: nvmlDeviceHandle(dev),
 		Model:  C.GoString(&model[0]),
 		UUID:   C.GoString(&uuid[0]),
 		Path:   fmt.Sprintf("/dev/nvidia%d", uint(minor)),
@@ -160,12 +160,13 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 		Temperature: uint(temp),
 		Utilization: UtilizationInfo{
 			GPU:     uint(usage.gpu),
+			Memory:  uint(usage.memory),
 			Encoder: uint(encoder[0]),
 			Decoder: uint(decoder[0]),
 		},
 		Memory: nvmlMemoryStatus{
-			Used: uint64(mem.Used),
-			Free: uint64(mem.Free),
+			Used: uint64(mem.used),
+			Free: uint64(mem.free),
 		},
 		Clocks: ClockInfo{
 			Core:   uint(clock[0]),
@@ -207,7 +208,7 @@ func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 func GetP2PLink(dev1, dev2 *NVMLDevice) (link P2PLinkType, err error) {
 	var level C.nvmlGpuTopologyLevel_t
 
-	r := C.nvmlDeviceGetTopologyCommonAncestor(dev1.handle, dev2.handle, &level)
+	r := C.nvmlDeviceGetTopologyCommonAncestor(dev1.Handle, dev2.Handle, &level)
 	if r == C.NVML_ERROR_FUNCTION_NOT_FOUND {
 		return P2PLinkUnknown, nil
 	}

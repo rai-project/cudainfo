@@ -71,6 +71,7 @@ type PCIInfo struct {
 // UtilizationInfo ...
 type UtilizationInfo struct {
 	GPU     uint
+	Memory  uint
 	Encoder uint
 	Decoder uint
 }
@@ -100,8 +101,9 @@ type nvmlMemoryInfo struct {
 }
 
 type nvmlMemoryStatus struct {
-	Used uint64
-	Free uint64
+	Used      uint64
+	Free      uint64
+	ECCErrors ECCErrorsInfo
 }
 
 // ProcessInfo ...
