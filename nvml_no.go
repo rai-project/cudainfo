@@ -15,12 +15,12 @@ func GetDriverVersion() (string, error) {
 }
 
 // Status ...
-func (d *nvmlDevice) Status() (*DeviceStatus, error) {
+func (d *NVMLDevice) Status() (*DeviceStatus, error) {
 	return nil, ErrNVMLUnavailable
 }
 
 // GetP2PLink ...
-func GetP2PLink(dev1, dev2 *nvmlDevice) (P2PLinkType, error) {
+func GetP2PLink(dev1, dev2 *NVMLDevice) (P2PLinkType, error) {
 	return P2PLinkType(0), ErrNVMLUnavailable
 }
 
@@ -30,7 +30,7 @@ func GetDevicePath(idx uint) (string, error) {
 }
 
 // NewNvmlDevice ...
-func NewNvmlDevice(idx uint) (device *nvmlDevice, err error) {
+func NewNvmlDevice(idx uint) (device *NVMLDevice, err error) {
 	return nil, ErrNVMLUnavailable
 }
 

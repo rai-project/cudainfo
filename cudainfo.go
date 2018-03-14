@@ -25,7 +25,7 @@ type cuDevice struct {
 	Memory cuMemoryInfo
 }
 
-type nvmlDevice struct {
+type NVMLDevice struct {
 	handle nvmlDeviceHandle
 
 	Model       string
@@ -42,7 +42,7 @@ type nvmlDevice struct {
 type Device struct {
 	Idx int
 	*cuDevice
-	*nvmlDevice
+	*NVMLDevice
 }
 
 // P2PLinkType ...
@@ -156,6 +156,7 @@ var (
 		"6.0": 64,  // Pascal Generation (SM 6.0) GP100 class
 		"6.1": 128, // Pascal Generation (SM 6.1) GP10x class
 		"6.2": 128, // Pascal Generation (SM 6.2) GP10x class
+		"7.0": 64,  // Volta Generation (SM 7.0) GV100 class
 	}
 
 	archToHyperQ = map[string]uint{
@@ -175,6 +176,7 @@ var (
 		"6.0": 32, // Pascal Generation (SM 6.0) GP100 class
 		"6.1": 32, // Pascal Generation (SM 6.1) GP10x class
 		"6.2": 32, // Pascal Generation (SM 6.2) GP10x class
+		"7.0": 64, // Volta Generation (SM 7.0) GV100 class
 	}
 )
 
@@ -214,7 +216,7 @@ func GetCUDADevice(id int) (*Device, error) {
 	return &Device{
 		Idx:        id,
 		cuDevice:   cuDev,
-		nvmlDevice: nvmlDev,
+		NVMLDevice: nvmlDev,
 	}, nil
 }
 

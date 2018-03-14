@@ -60,7 +60,7 @@ var pcieGenToBandwidth = map[int]uint{
 }
 
 // NewNvmlDevice ...
-func NewNvmlDevice(idx uint) (device *nvmlDevice, err error) {
+func NewNvmlDevice(idx uint) (device *NVMLDevice, err error) {
 	var (
 		dev   C.nvmlDevice_t
 		model [szModel]C.char
@@ -118,7 +118,7 @@ func NewNvmlDevice(idx uint) (device *nvmlDevice, err error) {
 }
 
 // Status ...
-func (d *nvmlDevice) Status() (status *DeviceStatus, err error) {
+func (d *NVMLDevice) Status() (status *DeviceStatus, err error) {
 	var (
 		power      C.uint
 		temp       C.uint
@@ -200,7 +200,7 @@ func (d *nvmlDevice) Status() (status *DeviceStatus, err error) {
 }
 
 // GetP2PLink ...
-func GetP2PLink(dev1, dev2 *nvmlDevice) (link P2PLinkType, err error) {
+func GetP2PLink(dev1, dev2 *NVMLDevice) (link P2PLinkType, err error) {
 	var level C.nvmlGpuTopologyLevel_t
 
 	r := C.nvmlDeviceGetTopologyCommonAncestor(dev1.handle, dev2.handle, &level)
