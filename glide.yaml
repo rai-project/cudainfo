@@ -4,7 +4,6 @@ import:
   version: ^1.0.0
 - package: github.com/rai-project/config
 - package: github.com/rai-project/logger
-testImport:
 - package: github.com/stretchr/testify
   subpackages:
   - assert
